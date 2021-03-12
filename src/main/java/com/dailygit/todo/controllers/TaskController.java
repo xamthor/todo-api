@@ -3,6 +3,7 @@ package com.dailygit.todo.controllers;
 import com.dailygit.todo.Repository.TaskRepository;
 import com.dailygit.todo.models.TaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,14 +18,16 @@ public class TaskController {
     public TaskRepository taskRepository;
 
     @GetMapping("all")
-    public List<TaskModel> Index() {
-        return taskRepository.findAll();
+    public List<TaskModel> Index(@RequestParam String userID) {
+        Sort sort = Sort.by("timestamp").descending();
+
+        return taskRepository.findAllByuserID(userID, sort);
     }
 
     @PostMapping("create")
     public TaskModel Create(@RequestBody TaskModel data) {
 
-        TaskModel newTask = new TaskModel(data.getContent());
+        TaskModel newTask = new TaskModel(data.getTitle(), data.getContent(), data.getUserID());
 
         taskRepository.save(newTask);
 
